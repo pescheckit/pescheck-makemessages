@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68.0", "setuptools-scm>=8.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pescheck-makemessages"
+dynamic = ["version"]
+description = "Custom Django makemessages command that clears fuzzy entries, preserves date headers, and defaults to --add-location=file."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+dependencies = ["django>=4.2"]
+
+[project.urls]
+Homepage = "https://github.com/pescheckit/pescheck-makemessages"
+
+[tool.setuptools.packages.find]
+include = ["pescheck_makemessages*"]
+
+[tool.setuptools_scm]
