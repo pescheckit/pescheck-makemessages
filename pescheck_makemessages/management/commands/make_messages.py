@@ -31,7 +31,7 @@ class Command(makemessages.Command):
 
         if os.path.exists(pofile):
             # Clear fuzzy flags and empty their msgstr.
-            args = ["msgattrib", "--clear-fuzzy", "--empty", "-o", pofile, pofile]
+            args = ["msgattrib", "--clear-fuzzy", "--empty", "--no-obsolete", "-o", pofile, pofile]
             _, errors, status = popen_wrapper(args)
             if errors and status != 0:
                 raise makemessages.CommandError("errors happened while running msgattrib\n%s" % errors)
