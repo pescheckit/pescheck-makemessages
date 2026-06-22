@@ -1,5 +1,6 @@
 import os
 import re
+import subprocess
 from pathlib import Path
 
 from django.core.management.commands import makemessages
@@ -15,6 +16,35 @@ class Command(makemessages.Command):
         if options.get("add_location") is None:
             options["add_location"] = "file"
         super().handle(*args, **options)
+
+    def find_files(self, root):
+        # Skip files that git ignores (e.g. test artifacts) so they don't
+        # leak msgids into the .po files.
+        return self._drop_gitignored(super().find_files(root))
+
+    def _drop_gitignored(self, files):
+        if not files:
+            return files
+
+        paths = [f.path for f in files]
+        try:
+            result = subprocess.run(
+                ["git", "check-ignore", "--stdin", "-z"],
+                input="\0".join(paths) + "\0",
+                capture_output=True,
+                text=True,
+            )
+        except (OSError, FileNotFoundError):
+            # git unavailable: leave the file list untouched.
+            return files
+
+        # 0 = some paths ignored, 1 = none ignored; anything else (e.g. 128
+        # when not in a git repo) means we can't tell, so keep everything.
+        if result.returncode not in (0, 1):
+            return files
+
+        ignored = {p for p in result.stdout.split("\0") if p}
+        return [f for f in files if f.path not in ignored]
 
     def write_po_file(self, potfile, locale):
         basedir = os.path.join(os.path.dirname(potfile), locale, "LC_MESSAGES")
