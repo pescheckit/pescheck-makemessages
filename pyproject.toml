@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "pescheck-makemessages"
 dynamic = ["version"]
-description = "Custom Django makemessages command that clears fuzzy entries, preserves date headers, and defaults to --add-location=file."
+description = "Custom Django makemessages command that clears fuzzy entries, preserves date headers, skips git-ignored files, and defaults to --add-location=file."
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.10"
